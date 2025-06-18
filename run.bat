@@ -1,0 +1,1 @@
+docker compose -f immich.workers.yml --env-file .env up -d --scale immich-microservices=3

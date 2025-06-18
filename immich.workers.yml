@@ -1,0 +1,35 @@
+name: immich_remote_workers
+
+services:
+  immich-microservices:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    restart: unless-stopped
+    environment:
+      IMMICH_WORKERS_EXCLUDE: 'api'
+      REDIS_HOSTNAME: ${IMMICH_PI_HOST}
+      DB_HOSTNAME: ${IMMICH_PI_HOST}
+      DB_PORT: 5432
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_DATABASE_NAME: ${DB_DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+
+    volumes:
+      - /mnt/y/Photos:/usr/src/app/upload
+      - /mnt/y/Photos:/usr/src/app/external
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    # For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
+    # Example tag: ${IMMICH_VERSION:-release}-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}-cuda
+    extends:
+      file: hwaccel.ml.yml
+      service: cuda # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    volumes:
+      - model-cache:/cache
+    restart: always
+    ports:
+      - 3003:3003
+
+volumes:
+  model-cache:
