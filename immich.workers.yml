@@ -2,7 +2,6 @@ name: immich_remote_workers
 
 services:
   immich-microservices:
-    user: "1000:1000"
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     restart: unless-stopped
     environment:
