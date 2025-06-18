@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  redis-tester:
+    image: redis:7-alpine
+    command: redis-cli -h ${IMMICH_PI_HOST} ping
+    restart: "no"
+
+  postgres-tester:
+    image: postgres:15-alpine
+    environment:
+      PGPASSWORD: postgres
+    command: >
+      sh -c "until pg_isready -h ${IMMICH_PI_HOST} -p 5432 -U postgres;
+             do echo waiting for pg...; sleep 2; done"
+    restart: "no"
