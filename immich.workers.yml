@@ -2,6 +2,7 @@ name: immich_remote_workers
 
 services:
   immich-microservices:
+    user: "1000:1000"
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     restart: unless-stopped
     environment:
@@ -13,10 +14,11 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_DATABASE_NAME: ${DB_DATABASE_NAME}
       POSTGRES_INITDB_ARGS: '--data-checksums'
-
     volumes:
-      - /mnt/y/Photos:/usr/src/app/upload
-      - /mnt/y/Photos:/usr/src/app/external
+      - /media/ext-hub-1/Photos:/usr/src/app/upload:rw
+      - /media/ext-hub-1/Photos:/usr/src/app/external:rw
+    
+    
   immich-machine-learning:
     container_name: immich_machine_learning
     # For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
