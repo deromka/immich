@@ -3,6 +3,9 @@ name: immich_remote_workers
 services:
   immich-microservices:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    extends:
+      file: hwaccel.transcoding.yml
+      service: nvenc # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     restart: unless-stopped
     environment:
       IMMICH_WORKERS_EXCLUDE: 'api'
@@ -14,8 +17,7 @@ services:
       DB_DATABASE_NAME: ${DB_DATABASE_NAME}
       POSTGRES_INITDB_ARGS: '--data-checksums'
     volumes:
-      - /media/ext-hub-1/Photos:/usr/src/app/upload:rw
-      - /media/ext-hub-1/Photos:/usr/src/app/external:rw
+      - /media/ironwolf/photos:/usr/src/app/upload:rw
     
     
   immich-machine-learning:
