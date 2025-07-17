@@ -30,6 +30,14 @@ services:
       service: cuda # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
     volumes:
       - model-cache:/cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+    # ✅ Also add this to make sure Docker understands you're using the GPU runtime
+    runtime: nvidia
     restart: always
     ports:
       - 3003:3003
